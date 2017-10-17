@@ -21,7 +21,7 @@
 
   body{background: #E0E0E0; font-family: verdana; color : #fff; padding: 0px; margin: 0px;}
   h1{color: black; font-size: 48px; text-transform: uppercase; letter-spacing: 2px; text-align: center; height: 70px; width: 60%; margin: 0 auto;}
-  p{font-size:16px; text-align: center;}
+  p{font-size:16px; color: black;}
   ul{list-style-type:none; padding:0px; margin-top: 0px;}
   #grad{ border-bottom: 2px solid; border-bottom-color: red; margin-bottom: 5px; font-size: 150%; height:300px; min-width: 705px;}
   #grad2{min-width: 705px;}
@@ -32,7 +32,8 @@
   #index {float:right;}
   img{float:left;}
   #info{overflow: hidden; margin:0px;width:365px; padding-left: 10px;}
-
+  #bio{min-width: 705px; min-height: 200px; background-color: white;}
+  #bio-info{padding: 15px; color: #646464;}
   div {width: 60%; margin: 0 auto;  }
 
 </style>
@@ -67,12 +68,18 @@ function counter()
   <h1 id = "grad2">  ARTIST</h1>
   <div id = "grad">
     <% console.log(rank); %>
+
 <img src= <%= data[rank -1].picUrl %> alt="Smiley face" height="300" width="300" >
 <div id= "info">
   <h3>Name: <%= id %></h3>
   <h3>Genre: <%= data[rank - 1].genre %></h3>
   <h3>Follower: <%= data[rank - 1].followers %></h3>
 </div>
+   </div>
+   <div id= "bio" >
+    <p id = "bio-info">
+      <%= data[rank - 1].bio %>
+    </p>
    </div>
 
 </body>
