@@ -26,29 +26,29 @@ var con = mysql.createConnection({
 
 function Artist(name,picUrl,followers,genre)
 {
- this.name = name;
- this.followers = followers;
- this.picUrl = picUrl;
- this.genre = genre;
+  this.name = name;
+  this.followers = followers;
+  this.picUrl = picUrl;
+  this.genre = genre;
 }
 
 
-function updateDatabase()
+/*function updateDatabase()
 {
 
-console.log("Conne!");
+  console.log("Conne!");
 
   artistArray.forEach(function(x){
- var sql = 'insert into artist (artist_id, artist_name, picture_url,artist_followers,bio) select * from (select null,'+'\''+x.name+'\''+','+'\''+x.picUrl+'\''+','+'\''+x.followers+'\''+','+'\''+x.bio+'\'' +') as tmp where not exists (select artist_name from artist  where artist_name = '+'\"' +x.name +'" );'
+    var sql = 'insert into artist (artist_id, artist_name, picture_url,artist_followers,bio) select * from (select null,'+'\''+x.name+'\''+','+'\''+x.picUrl+'\''+','+'\''+x.followers+'\''+','+'\''+x.bio+'\'' +') as tmp where not exists (select artist_name from artist  where artist_name = '+'\"' +x.name +'" );'
 
-  con.query(sql, function(err, result)
-{
-  if (err) throw err;
-  //console.log(result);
-})
-})
+    con.query(sql, function(err, result)
+    {
+      if (err) throw err;
+      //console.log(result);
+    })
+  })
 
-}
+}*/
 
 app.set('view engine' , 'ejs');
 
@@ -59,42 +59,43 @@ app.get('/', function(req, res)
   .then( function (){
     console.log('HERE 1');
     return artData.loadArtistData()})
-  .then(function (result){
-    console.log('HERE 2');
+    .then(function (result){
+      console.log('HERE 2');
+      return artData.loadArtistData2(result);
+    })
+    .then (function (result)
+    {
+      console.log('HERE 3');
+      function compare (a,b)
+      {
+        if (a.followers < b.followers)
+        return 1;
+        if (a.followers > b.followers)
+        return -1;
+        return 0;
+      }
 
-   return artData.loadArtistData2(result);
- })
- .then (function (result)
-{
-  console.log('HERE 3');
-  function compare (a,b)
-  {
-  if (a.followers < b.followers)
-  return 1;
-  if (a.followers > b.followers)
-  return -1;
-  return 0;
-}
+      artData.getArtistArray().sort(compare);
 
-  artData.getArtistArray().sort(compare);
-   return artData.getBio();
+      return artData.getBio();
 
-})
-  .then(function (result) {
-    database.updateDatabase(artData.getArtistArray());
-    console.log('HERE 4');
-    res.render('home', {data : artData.getArtistArray()});
-  })
-  .catch (function (error){
-    console.log('finall ERROR');
-    console.log('ERROR');
+    })
+    .then(function (result) {
+      database.updateDatabase(artData.getArtistArray());
+      //artData.loadTwitterData();
+      console.log('HERE 4');
+      res.render('home', {data : artData.getArtistArray()});
+    })
+    .catch (function (error){
+      console.log('finall ERROR');
+      console.log('ERROR');
+    });
+
   });
 
-});
+  app.get('/profile/:id&:rank', function (req, res){
 
-app.get('/profile/:id&:rank', function (req, res){
+    res.render('profile', {id : req.params.id,rank : req.params.rank , data:artData.getArtistArray() });
+  })
 
-res.render('profile', {id : req.params.id,rank : req.params.rank , data:artData.getArtistArray() });
-})
-
-app.listen(2000);
+  app.listen(2000);
