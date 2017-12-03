@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+#grad {
+ background: red; /* For browsers that do not support gradients */
+ background: -webkit-linear-gradient(-45deg, rgba(255,255,102,.6) , rgba(255,0,0,.6)); /* For Safari 5.1 to 6.0 */
+ background: -o-linear-gradient(-45deg, rgba(255,255,102,.6) , rgba(255,0,0,.6)); /* For Opera 11.1 to 12.0 */
+ background: -moz-linear-gradient(-45deg, rgba(255,255,102,.6) , rgba(255,0,0,.6)); /* For Firefox 3.6 to 15 */
+ background: linear-gradient(-45deg, rgba(255,255,102,.6) , rgba(255,0,0,.6)); /* Standard syntax */
+}
+
+#grad:hover {
+  background: red; /* For browsers that do not support gradients */
+  background: -webkit-linear-gradient(-45deg, rgba(255,255,102,1) , rgba(255,0,0,1)); /* For Safari 5.1 to 6.0 */
+  background: -o-linear-gradient(-45deg, rgba(255,255,102,1) , rgba(255,0,0,1)); /* For Opera 11.1 to 12.0 */
+  background: -moz-linear-gradient(-45deg, rgba(255,255,102,1) , rgba(255,0,0,1)); /* For Firefox 3.6 to 15 */
+  background: linear-gradient(-45deg, rgba(255,255,102,1) , rgba(255,0,0,1)); /* Standard syntax */
+
+}
+
+#grad2 {
+ background: red; /* For browsers that do not support gradients */
+ background: -webkit-linear-gradient(-90deg, rgba(160,160,160,.3) , rgba(242,242,242,.3)); /* For Safari 5.1 to 6.0 */
+ background: -o-linear-gradient(-90deg, rgba(242,242,242,.3) , rgba(255,255,255,.3)); /* For Opera 11.1 to 12.0 */
+ background: -moz-linear-gradient(-90deg, rgba(242,242,242,.3) , rgba(255,255,255,.3)); /* For Firefox 3.6 to 15 */
+ background: linear-gradient(-90deg, rgba(242,242,242,.3) , rgba(255,255,255,.3)); /* Standard syntax */
+}
+
+/*<ul id = "nav">
+<li><a href="http://localhost:2000/" style = "font-size: 200%">TOPPOP</a> </li>
+<li style="float:right"> <a href="/" >Contact</a> </li>
+</ul>*/
+
+
+  body{background: #E0E0E0; font-family: verdana; color : #fff; padding: 0px; margin: 0px;}
+  h1{color: black; font-size: 48px; text-transform: uppercase; letter-spacing: 2px; text-align: center; height: 70px; width: 60%; margin: 0 auto;}
+  p{font-size:16px; text-align: center;}
+  ul{list-style-type:none; padding:0px; margin-top: 0px;}
+  #grad{ border-bottom: 2px solid; border-bottom-color: red; margin-bottom: 5px; font-size: 150%;}
+  #nav{list-style-type: none;margin: 0; padding: 0;overflow: hidden; background-color: #333; width: 100%;}
+  #nav li{float: left;}
+  #nav li a{display: block; color: white; text-align: center; padding: 14px 16px; text-decoration: none;}
+  #nav li a:hover {background-color: #111;}
+  #index {float:right;}
+  nav{
+    width: 100%;
+  }
+
+  div {width: 60%; margin: 0 auto;  }
+
+  #myInput {
+  margin: 0 auto;
+  width: 20%;
+  padding: 19px 0; /* Increase font-size */
+  }
+
+  #myInput2{
+  width:100%;
+  font-size: 20px;
+  outline:none;
+  }
+
+
+</style>
+
+
+<script>
+var count = 0;
+function counter()
+{
+  this.innerHTML = count +1;
+}
+</script>
+
+<script type="text/javascript">
+function loadProfile(elmnt) {
+    location.href = "/profile/"+ encodeURI(elmnt.childNodes[2].innerHTML);
+}
+</script>
+
+
+</head>
+<nav>
+  <ul id = "nav">
+  <li><a href="http://localhost:2000/" style = "font-size: 200%">TOPPOP</a> </li>
+  <div id="myInput">
+  <input id="myInput2" type="text" placeholder="Search Artist">
+  </div>
+  <li style="position:absolute; top:0; right: 0;"> <a href="/" >Contact</a> </li>
+  </ul>
+</nav>
+<body>
+
+  <h1 id = "grad2"> SEARCH </h1>
+  <div>
+  <ul id ="rank" >
+    <% var count= 1; %>
+  <% sArray.forEach(function(item){ %>
+    <li id = "grad" onclick="loadProfile(this)"> <img src= <%= item.picture_url %> alt="Smiley face" height="100" width="100" ><strong id = "artist-name"> <%= item.artist_name %> </strong> </li>
+  <% }); %>
+</ul>
+</div>
+
+</body>
+<script>
+document.getElementById("myInput2")
+    .addEventListener("keyup", function(event) {
+    event.preventDefault();
+    if (event.keyCode === 13) {
+      console.log("enter pressed");
+      var input, value;
+      input = document.getElementById('myInput2');
+      value = input.value;
+      location.href = "/search/"+value;
+    }
+});
+</script>
+</html>
