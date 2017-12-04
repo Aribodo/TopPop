@@ -8,7 +8,6 @@
   var database = datab();
   var client_id = '5080dcbe4ead4467820c37080e368ac9';
   var client_secret = 'bab61c3aacf24556adfb81939c795be5';
-
   var helper = help();
 
 
