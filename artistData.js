@@ -30,8 +30,6 @@
     {
     var temp = data.slice(0);
     data.length = 0;
-    console.log("TEMPORARY"+temp.length);
-    console.log("NEW DATA"+data.length);
     for(var i = 0; i < temp.length; i++ )
     {
        for(var x = 0; x < index.length; x++)
@@ -51,13 +49,13 @@
 
 
     }
-      //return data = newArray;
+
     }
-      console.log(data.length);
+
   }
   function updateArtistArray(size, element)
   {
-    console.log("update artist Array");
+    console.log("UPDATING ARTIST ARRAY");
     var count = 0;
     return new Promise(function(resolve,reject)
     {
@@ -89,8 +87,7 @@
 
   function spotifyIdsAlreadyOnDatabase(body,data)
   {
-    console.log("spot");
-    //console.log(data);
+    console.log("SEARCHING DATABASE FOR ARTIST PREVIOUSLY SAVED");
     var removeIndex = [];
     return new Promise(function(resolve, reject)
     {
@@ -102,13 +99,13 @@
       var token = body.access_token;
 
       var artistName = helper.removeFeatures(x.artist);
-        //console.log(artistName);
+
        database.searchDatabase(artistName,function(result){
 
         count = count + 1;
         if (result.length != 0 )
         {
-          console.log("resultfsa");
+
           if (count<50)
           {
           spotifyIds[0].push(result[0].spotify_artist_id);
@@ -122,7 +119,7 @@
         if(count == data.length)
         {
            removeAtindex(removeIndex,data);
-           console.log("finished remove"+ data.length);
+
            resolve(spotifyIds);
         }
       });
@@ -149,7 +146,7 @@
 
 
   function spotifyBulkSearch(spotifyIds,token){
-    console.log("Bulk search spotify for artists");
+    console.log("SEARCH SPOTIFY IN BULK");
     if (spotifyIds[0].length == 0)
     {
       return new Promise( function(resolve, reject){
@@ -190,14 +187,15 @@
 
 
 
-  function spotifyIndividualSearch(token, count,data)
+  function spotifyIndividualSearch(token,data)
   {
-    console.log("spotify individual search");
+    console.log("SPOTIFY INDIVIDUAL SEARCH ");
     return new Promise(function(resolve, reject)
   {
+    var count = 0;
     var errorCount = 0;
     count2 = data.length;
-    //console.log(data);
+
      data.forEach(function(x) {
 
        var artistName = helper.removeFeatures(x.artist);
@@ -209,7 +207,7 @@
          },
          json:true
        };
-       console.log("spotify individual request");
+
        request2.get(options).then(function(body){
 
          if (body.artists.items.length != 0 && helper.verifyArtistDistinct(body.artists.items[0].name, artistArray)){
@@ -220,16 +218,18 @@
            }
            else{
              count = count + 1;
+
              artistArray.push(new Artist(body.artists.items[0].name, body.artists.items[0].images[0].url,body.artists.items[0].followers.total, body.artists.items[0].genres[0],body.artists.items[0].id ));
              if(count == count2)
              {
-               console.log("BULK RESOLVED");
+               //console.log("BULK RESOLVED");
                resolve(1);
              }
            }
          }
          else {
            count2 = count2 - 1;
+
            if (body.artists.items[0] == undefined)
            {
              /*console.log("unfound")
@@ -243,12 +243,16 @@
            console.log("\n")
            console.log("\n")*/
          }
+         if(count == count2)
+         {
+           //console.log("BULK RESOLVED");
+           resolve(1);
+         }
          }
 
        })
        .catch(function(error)
        {
-       console.log("spotify individual search error")
          if (errorCount == 0){
            console.log(error);
            errorCount = errorCount + 1;
@@ -269,7 +273,7 @@
 
       getBio : function(name)
       {
-        //console.log("GET BIO");
+        console.log("GET BIO");
         var url = 'https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro=&explaintext=&titles='  ;
         var bio;
         var count = 0 ;
@@ -318,7 +322,7 @@
 
           data.push(d);
         } */
-        console.log('loadArtistData');
+        console.log('LOAD ARTIST DATA');
         var authOptions = {
           method:'POST',
           url: 'https://accounts.spotify.com/api/token',
@@ -339,7 +343,7 @@
           artistArray = [];
           //BULK SEARCH
           spotifyIdsAlreadyOnDatabase(body,data).then(function(ids){
-          console.log("searched database" + data.length);
+
             return spotifyBulkSearch(ids,token)
           }).then(function(element){
             if (element == 1)
@@ -352,7 +356,7 @@
             }
           }).then(function(){
          //INDIVIDUAL SEARCH
-         return spotifyIndividualSearch(token, count,data)
+         return spotifyIndividualSearch(token,data)
 
        }).then(function(){
            resolve(artistArray);
@@ -360,39 +364,6 @@
 
         });
 
-        });
-
-      },
-
-      loadArtistData2 : function (body){
-        console.log("loadArtistData2");
-
-        return new Promise(function(resolve, reject){
-          var count = 0;
-          var count2 = data.length;
-          var errorCount = 0;
-          var token = body.access_token;
-          artistArray = [];
-          //BULK SEARCH
-          spotifyIdsAlreadyOnDatabase(body).then(function(ids){
-
-            return spotifyBulkSearch(ids,token)
-          }).then(function(element){
-            if (element == 1)
-            {
-              return Promise.resolve(1);
-            }
-            else
-            {
-            return updateArtistArray(element.length, element)
-            }
-          }).then(function(){
-         //INDIVIDUAL SEARCH
-         return spotifyIndividualSearch(token, count)
-
-       }).then(function(){
-           resolve(1);
-       })
         });
 
       },

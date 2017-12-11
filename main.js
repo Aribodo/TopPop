@@ -114,6 +114,8 @@ app.get('/', function(req, res)
         artData.loadArtistData(artist)
         .then(function(){
           database.updateDatabase(artData.getArtistArray());
+          console.log("get array")
+          console.log(artData.getArtistArray());
           database.searchDatabaseForCloseMatch(artistName, function(result2)
         {
           if (result2.length != 0)
