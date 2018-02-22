@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<% include partials/styles.ejs %>
+
+<script>
+var count = 0;
+function counter()
+{
+  this.innerHTML = count +1;
+}
+</script>
+
+<script type="text/javascript">
+
+    function loadProfile(elmnt) {
+        location.href = "/profile/"+ encodeURI(elmnt);
+
+    }
+
+</script>
+
+
+</head>
+<% include partials/nav.ejs %>
+<body>
+
+  <h1 id = "grad2"> User </h1>
+  <div id = "grad" class = "profile">
+
+<img src= "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/PICA.jpg/1200px-PICA.jpg" alt="Smiley face" height="300" width="300" >
+<div id= "info">
+  <h3>Name: </h3>
+  <h3>Genre: </h3>
+  <h3>Follower: </h3>
+</div>
+   </div>
+   <div id= "bio" >
+    <p id = "bio-info">
+
+    </p>
+   </div>
+
+</body>
+<script>
+document.getElementById("myInput2")
+    .addEventListener("keyup", function(event) {
+    event.preventDefault();
+    if (event.keyCode === 13) {
+      console.log("enter pressed");
+      var input, value;
+      input = document.getElementById('myInput2');
+      value = input.value;
+      location.href = "/search/"+value;
+    }
+});
+</script>
+</html>

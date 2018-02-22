@@ -1,0 +1,19 @@
+<nav>
+  <ul id = "nav">
+  <li><a href="http://localhost:2000/" style = "font-size: 200%">TOPPOP</a> </li>
+  <div id="myInput">
+  <input id="myInput2" type="text" placeholder="Search Artist" >
+  </div>
+  <% if(session.signedIn){ %>
+  <li style = "position:absolute; top:8px; right: 180px "> <a href = "/userProfile" > <%= session.userName %> </a> </li>
+  <% } %>
+  <% if(session.signedIn) { %>
+    <% console.log(session); %>
+  <li style = "position:absolute; top:8px; right: 90px "> <a href = "/logOut" > Logout </a> </li>
+  <% } else { %>
+    <% console.log("login"); %>
+  <li style = "position:absolute; top:8px; right: 90px "> <a href = "/auth" > Login </a> </li>
+    <% } %>
+  <li style="position:absolute; top:8px; right: 0;"> <a href="/" >Contact</a> </li>
+  </ul>
+</nav>

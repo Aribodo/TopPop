@@ -3,8 +3,12 @@ Web application for ranking artists based on their current popularity. Combines 
 
 
 HOME PAGE
-![](Snip20171017_1.png)
+![](/pageImages/homePage.png)
 
 
 PROFILE PAGE
-![](Snip20171017_2.png)
+![](/pageImages/profile.png)
+
+
+SEARCH PAGE
+![](/pageImages/searchPage.png)

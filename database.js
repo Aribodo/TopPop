@@ -34,8 +34,8 @@ module.exports = function(){
 },
 searchDatabase: function(name, callBack){
 
-var sql = 'select* from artist where artist_name ='+'\''+name+'\';'
-
+var sql = 'select* from artist where artist_name =' + '\"' + name + '\";'
+var count = 0;
 console.log("searchData");
 con.query(sql, function(err, result2)
 {

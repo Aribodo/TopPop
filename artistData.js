@@ -9,6 +9,7 @@
   var client_id = '5080dcbe4ead4467820c37080e368ac9';
   var client_secret = 'bab61c3aacf24556adfb81939c795be5';
   var helper = help();
+   var BillBoard = require('billboard-hot-100');
 
 
 
@@ -93,7 +94,8 @@
     {
       var count = 0;
       var spotifyIds = [[],[]];
-
+     console.log("before error");
+     //console.log(data);
       data.forEach(function(x,index){
 
       var token = body.access_token;
@@ -212,9 +214,12 @@
 
          if (body.artists.items.length != 0 && helper.verifyArtistDistinct(body.artists.items[0].name, artistArray)){
 
-           if (body.artists.items[0].name == 'undefined' || body.artists.items[0].images[0].url == 'undefined' )
+           if (body.artists.items[0].name == 'undefined' || body.artists.items[0].images[0] == undefined )
            {
              console.log('error in search');
+             //console.log(encodeURI(body.artists.items[0].name));
+             //console.log(body.artists);
+            resolve(1);
            }
            else{
              count = count + 1;
@@ -292,7 +297,7 @@
         console.log("BILLBOARD 100");
         var data = [];
         return new Promise(function(resolve, reject) {
-          request2('http://www.billboard.com/rss/charts/hot-100', function(error, response, body) {
+          /*request2('http://www.billboard.com/rss/charts/hot-100', function(error, response, body) {
             console.log('FETCH BILLBOARD');
             if (error)
             {
@@ -309,7 +314,15 @@
 
             }
 
+          })*/
+
+          BillBoard.init().then(function(billboard){
+          var songs = billboard.getAllSongs()
+          resolve(songs)
+          }).catch(function(err){
+          console.log(err)
           })
+
         });
       },
 

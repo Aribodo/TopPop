@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<% include partials/styles.ejs %>
+
+
+
+</head>
+<% include partials/nav.ejs %>
+<body>
+
+  <h1 id = "grad2"> Authenticate </h1>
+  <div >
+  		<!--login-profile-->
+
+  		<!--login-profile-->
+  		<!--signin-form-->
+  		<div id = "grad">
+  			<div >
+  				<h3>Login</h3>
+
+  				<div >
+  					<form action="/auth" method="post">
+  						<input type="text" name="logemail" placeholder="E-mail" required="">
+  						<input type="password" name="logpassword" placeholder="Password" required="">
+  						<div >
+  							<input type="submit" value="LOGIN NOW">
+  						</div>
+  					</form>
+  				</div>
+  			</div>
+  		</div>
+
+      <div id = "grad">
+  			<div >
+  				<h3>Register</h3>
+
+  				<div >
+  					<form action="/auth" method="post">
+  						<input type="text" name="email" placeholder="E-mail" required="">
+  						<input type="text" name="username" placeholder="Username" required="">
+  						<input type="password" name="password" placeholder="Password" required="">
+  						<input type="password" name="passwordConf" placeholder="Confirm Password" required="">
+  						<input type="submit" value="REGISTER">
+  					</form>
+  				</div>
+  				<p><a href="#"> By clicking register, I agree to your terms</a></p>
+  			</div>
+  		</div>
+  </div>
+
+</body>
+
+
+
+
+<script>
+
+</script>
+
+</html>
