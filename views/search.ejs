@@ -2,8 +2,15 @@
 <html>
 <head>
 <% include partials/styles.ejs %>
-
-
+<style>
+#grad:hover {
+  background: red; /* For browsers that do not support gradients */
+  background: -webkit-linear-gradient(-45deg, rgba(255,255,102,1) , rgba(255,0,0,1)); /* For Safari 5.1 to 6.0 */
+  background: -o-linear-gradient(-45deg, rgba(255,255,102,1) , rgba(255,0,0,1)); /* For Opera 11.1 to 12.0 */
+  background: -moz-linear-gradient(-45deg, rgba(255,255,102,1) , rgba(255,0,0,1)); /* For Firefox 3.6 to 15 */
+  background: linear-gradient(-45deg, rgba(255,255,102,1) , rgba(255,0,0,1)); /* Standard syntax */
+}
+</style>
 <script>
 var count = 0;
 function counter()
@@ -34,6 +41,7 @@ function loadProfile(elmnt) {
 </div>
 
 </body>
+<% include partials/footer.ejs %>
 <script>
 document.getElementById("myInput2")
     .addEventListener("keyup", function(event) {

@@ -4,6 +4,8 @@ mongoose.connect('mongodb://ariUmenyiora:Anderson1silva@aritestcluster-shard-00-
 mongoose.connection.once('open', function()
 {
   console.log('connection has been made')
-}).on ('error', function(error){
-  console.log('Connection error')
+}).on ('error', function(err){
+  console.log(err);
+  console.log('Connection error');
+
 });

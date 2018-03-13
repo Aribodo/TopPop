@@ -105,16 +105,16 @@
        database.searchDatabase(artistName,function(result){
 
         count = count + 1;
-        if (result.length != 0 )
+        if (result )
         {
 
           if (count<50)
           {
-          spotifyIds[0].push(result[0].spotify_artist_id);
+          spotifyIds[0].push(result.spotify_artist_id);
           removeIndex.push(index);
            }
            else{
-             spotifyIds[1].push(result[0].spotify_artist_id);
+             spotifyIds[1].push(result.spotify_artist_id);
              removeIndex.push(index);
            }
         }
@@ -402,29 +402,38 @@
       })
     },
 
-    loadTwitterData : function ()
+    loadTwitterData : function (artistName)
     {
+      return new Promise (function (resolve, reject)
+    {
+
 
       console.log('TWITTER.2');
       var client = new twitter ({
-
         consumer_key: 'KzxS6GCGbJEnhx6hpcAOEaWKl',
         consumer_secret:'cKYfVku24KdfPGy4r8OoI2uW8rYIK4SzzV3eklPyCLko5n3Kgd',
         access_token_key:'717857757353869312-BilwpyEt78izbMtLKMqxY7RLsfar0gR',
         access_token_secret: 'fi2PfqIimcs7TWZnMI5cmIwqvlYpY1YDYZRSREHF1Qse4'
       });
-      console.log(artistArray.length);
-      artistArray.forEach(function (entry)
-      {
-        client.get('users/search',{q: entry.name+ '&filter:verified' , count: 2}, function(error, body, response) {
-          console.log('TWITTER '  + body[0].screen_nam);
+      //console.log(artistArray.length);
+       var twitterInfo;
+        client.get('users/search',{q: artistName + '&filter:verified' , count: 2}, function(error, body, response) {
+          if (body[0])
+          {
+
+          twitterInfo = {name: body[0].screen_name , url:'https://twitter.com/' + body[0].screen_name };
+          console.log(twitterInfo);
+          resolve (twitterInfo);
+          }
 
         });
-      })
-    },
+
+    });
+  },
 
     getArtistArray : function ()
     {
+      //console.log(artistArray);
       return artistArray;
     },
 

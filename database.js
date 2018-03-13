@@ -1,4 +1,5 @@
 var mysql = require('mysql');
+var Artist = require('./model/artist');
 var con = mysql.createConnection({
 host: "localhost",
 user: "student",
@@ -10,85 +11,84 @@ module.exports = function(){
 
   return {
     updateDatabase : function (artistArray){
+      return new Promise(function (resolve, reject)
+      {
      var count = 0;
-    artistArray.forEach(function(x){
-
-   var sql = 'insert into artist (artist_id, artist_name, picture_url,artist_followers,genre,spotify_artist_id) select * from (select null,'+'\''+x.name+'\''+','+'\''+x.picUrl+'\''+','+'\''+x.followers+'\''+','+'\''+x.genre+'\''+','+'\''+x.twitterId+'\''+') as tmp where not exists (select artist_name from artist  where artist_name = '+'\"' +x.name +'" );'
-
-    con.query(sql, function(err, result)
-  {
-
-    if (err && count==0)
+console.log("Updating");
+    artistArray.forEach(function(x)
     {
-      console.log(err);
-      count++;
+      console.log("Updating2");
+      var artistData =  {
+        artist_name: x.name,
+        picture_url: x.picUrl,
+        artist_followers: x.followers,
+        genre: x.genre,
+        spotify_artist_id: x.twitterId,
+      }
+
+
+      Artist.create (artistData, function(error, user){
+        if(error && count == 0) {
+           //console.log(error);
+        }
+        else {
+          console.log("Datababse updated");
+          resolve(1);
+        }
+      })
+
     }
-    else{
-    //console.log("result");
-  }
-
-  })
-
-  })
+  ) })
 
 },
 searchDatabase: function(name, callBack){
 
-var sql = 'select* from artist where artist_name =' + '\"' + name + '\";'
 var count = 0;
-console.log("searchData");
-con.query(sql, function(err, result2)
-{
-if (err && count==0)
-{
-  console.log(err);
-  count++;
-}
-else if (result2.length == 0)
-{
-  result = result2;
-  callBack(result);
-  //console.log("BAD QUERY");
+console.log("searchData" + name);
 
-}
-else{
-  result = result2;
-  callBack(result);
-//console.log(result);
-
-}
-
+Artist.findOne ({artist_name: name})
+.exec(function (err, user){
+  if (err && count == 0) {
+    //console.log(err);
+    count++;
+  }
+  else if (!user)
+  {
+    console.log("empty");
+    callBack(user);
+  }
+  else {
+    callBack(user);
+  }
 })
 
 
 },
 searchDatabaseForCloseMatch: function(name, callBack){
-  console.log("search database");
-var sql = 'select* from artist where artist_name like '+'\"%'+name+'%\";'
+  console.log("search databaseX");
 
-con.query(sql, function(err, result2)
-{
 
-if (err && count==0)
+  console.log (name);
+  var count = 0;
+  Artist.find({ artist_name : { $regex :  name  , $options: 'i'} }, function (error, result)
 {
-  console.log(err);
+if (error && count == 0)
+{
+  //console.log(error);
   count++;
 }
-else if (result2.length == 0)
+else if (result.length == 0)
 {
-  result = result2;
+  //console.log(result);
   callBack(result);
-  //console.log("BAD QUERY");
-
 }
-else{
-  result = result2;
+else {
+  console.log("HERE!");
+  //console.log(result);
   callBack(result);
-
-
 }
+});
 
-})
 
 
 }

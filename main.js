@@ -73,6 +73,7 @@ app.use(session({
   mongooseConnection: mongoDB
   })
 }));
+
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
@@ -85,7 +86,7 @@ app.get('/', function(req, res)
     return artData.loadArtistData(data)})
     .then (function (result)
     {
-      console.log('HERE 2');
+      console.log('HERE 2x');
       //console.log(result);
       function compare (a,b)
       {
@@ -95,17 +96,18 @@ app.get('/', function(req, res)
         return -1;
         return 0;
       }
-     console.log('HERE 2');
+     console.log('HERE 2a');
       artData.getArtistArray().sort(compare);
-
+     console.log('HERE 2b');
       return Promise.resolve(1);
 
     })
     .then(function (result) {
+      console.log('HERE 2c');
       database.updateDatabase(artData.getArtistArray());
-      //artData.loadTwitterData();
+
       console.log('HERE 4');
-      console.log(req.session);
+      //console.log(req.session);
       res.render('home', {data : artData.getArtistArray() , session : req.session});
     })
     .catch (function (error){
@@ -120,7 +122,14 @@ app.get('/', function(req, res)
     database.searchDatabase(name.substring(1), function(result){
     artData.getBio(req.params.name).then(function(result2)
     {
-    res.render('profile', {data : result[0], bio: result2, session : req.session});
+      //console.log(result);
+      console.log("profile");
+      //console.log(name);
+     artData.loadTwitterData(name).then(function(result3){
+       console.log(result3);
+      res.render('profile', {data : result, bio: result2 , twitter : result3, session : req.session});
+     });
+
   });
 
   });
@@ -143,7 +152,7 @@ app.get('/', function(req, res)
     database.searchDatabaseForCloseMatch(artistName, function(result){
       if (result.length != 0)
       {
-        res.render('search', {sArray: result});
+        res.render('search', {sArray: result , session : req.session});
       }
       else
       {
@@ -151,16 +160,20 @@ app.get('/', function(req, res)
         var artist = [{artist:artistName}];
         artData.loadArtistData(artist)
         .then(function(){
-          database.updateDatabase(artData.getArtistArray());
-          console.log("get array")
-          console.log(artData.getArtistArray());
-          database.searchDatabaseForCloseMatch(artistName, function(result2)
-        {
-          if (result2.length != 0)
+          database.updateDatabase(artData.getArtistArray()).then(function(result)
           {
-          res.render('search', {sArray: result2});
-          }
+            console.log("get array")
+            console.log(artData.getArtistArray());
+            database.searchDatabaseForCloseMatch(artistName, function(result2)
+          {
+            if (result2.length != 0)
+            {
+              console.log("FOUNDISH");
+            res.render('search', {sArray: result2 , session : req.session});
+            }
+          });
         });
+
       });
       }
     });
@@ -178,7 +191,8 @@ app.get('/', function(req, res)
       return artData.loadArtistData(data)})
       .then (function (result)
       {
-        console.log('HERE 2');
+
+        console.log('HERE 2x');
         //console.log(result);
         function compare (a,b)
         {
@@ -188,13 +202,14 @@ app.get('/', function(req, res)
           return -1;
           return 0;
         }
-       console.log('HERE 2');
+       console.log('HERE 2.2');
         artData.getArtistArray().sort(compare);
 
         return Promise.resolve(1);
 
       })
       .then(function (result) {
+        console.log('HERE 3');
         database.updateDatabase(artData.getArtistArray());
         //artData.loadTwitterData();
         console.log('HERE 4');
