@@ -7,7 +7,7 @@ HOME PAGE
 
 
 PROFILE PAGE
-![](/pageImages/Snip20180313_1.png)
+![](/pageImages/Snip20180325_1.png)
 
 SIGN IN PAGE
 ![](/pageImages/Snip20180313_3.png)
