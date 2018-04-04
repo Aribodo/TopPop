@@ -7,6 +7,7 @@ HOME PAGE
 
 
 PROFILE PAGE
+
 Gives you up to date information on your favorite artists and if you are signed in allows you to follow and keep track of the artist.
 ![](/pageImages/Snip20180404_4.png)
 
