@@ -11,15 +11,21 @@ PROFILE PAGE
 Gives you up to date information on your favorite artists and if you are signed in allows you to follow and keep track of the artist.
 ![](/pageImages/Snip20180404_4.png)
 
+
+
 SIGN IN PAGE
 
 Authenticates and creates new users using mongo databases. Also inatanciates new sessions to track users.
 ![](/pageImages/Snip20180313_3.png)
 
+
+
 USER PROFILE
 
 Allows you to view the artist you follow and quickly jump to their pages. Analytics on artists will be viewable here in next update.
 ![](/pageImages/Snip20180404_2.png)
+
+
 
 SEARCH PAGE
 
