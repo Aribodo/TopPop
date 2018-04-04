@@ -22,7 +22,9 @@ const UserSchema = new Schema({
   passwordConf: {
     type: String,
     required: Boolean,
-  }
+  },
+  myArtists: [String]
+
 });
 
 

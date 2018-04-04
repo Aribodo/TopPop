@@ -4,7 +4,7 @@
   <div id="myInput">
   <input id="myInput2" type="text" placeholder="Search Artist" >
   </div>
-  <% if(session.signedIn){ %>
+  <% if(session){ %>
   <li style = "position:absolute; top:8px; right: 180px "> <a href = "/userProfile" > <%= session.userName %> </a> </li>
   <% } %>
   <% if(session.signedIn) { %>

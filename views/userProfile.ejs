@@ -19,6 +19,20 @@ function counter()
 
     }
 
+    $(document).ready(function(){
+        $("h2").click(function(){
+            $(this).next().toggle("fast");
+            if($(this).children(0)["0"].attributes["0"].nodeValue == '../images/angleUp.png')
+            {
+              $(this).children(0)["0"].attributes["0"].nodeValue = '../images/angleDown.png'
+            }
+            else {
+              $(this).children(0)["0"].attributes["0"].nodeValue = '../images/angleUp.png'
+            }
+
+        });
+    });
+
 </script>
 
 
@@ -32,14 +46,18 @@ function counter()
 <img src= "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/PICA.jpg/1200px-PICA.jpg" alt="Smiley face" height="300" width="300" >
 <div id= "info">
   <h3>Name: </h3>
-  <h3>Genre: </h3>
-  <h3>Follower: </h3>
 </div>
    </div>
    <div id= "bio" >
-    <p id = "bio-info">
+     <h2 class = "title"> you are tracking <%= session.myArtists.length %> artists <img src = "../images/angleUp.png" style ="float : right"><h2>
+       <div id = "tweets" >
+         <ul >
+           <% data.forEach(function(item){ %>
+             <li id = grad2 > <img style ="float : left" src= <%= item.picture_url %> alt="Smiley face" height="100" width="100" ><strong id = "artist-name"> <%= item.artist_name %> </strong></li>
 
-    </p>
+           <% }); %>
+       </ul>
+       </div>
    </div>
 
 </body>

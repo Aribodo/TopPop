@@ -1,5 +1,6 @@
 var mysql = require('mysql');
 var Artist = require('./model/artist');
+var User = require('./model/user');
 var con = mysql.createConnection({
 host: "localhost",
 user: "student",
@@ -10,14 +11,14 @@ database: "topPop"
 module.exports = function(){
 
   return {
+    //updates database with new artist
     updateDatabase : function (artistArray){
       return new Promise(function (resolve, reject)
       {
      var count = 0;
-console.log("Updating");
+     console.log("Updating");
     artistArray.forEach(function(x)
     {
-      console.log("Updating2");
       var artistData =  {
         artist_name: x.name,
         picture_url: x.picUrl,
@@ -41,11 +42,9 @@ console.log("Updating");
   ) })
 
 },
+//seaches database for artist by name
 searchDatabase: function(name, callBack){
-
 var count = 0;
-console.log("searchData" + name);
-
 Artist.findOne ({artist_name: name})
 .exec(function (err, user){
   if (err && count == 0) {
@@ -54,7 +53,6 @@ Artist.findOne ({artist_name: name})
   }
   else if (!user)
   {
-    console.log("empty");
     callBack(user);
   }
   else {
@@ -64,11 +62,30 @@ Artist.findOne ({artist_name: name})
 
 
 },
+//search database in bulk given array of names
+searchDatabaseBulk: function(nameArray, callBack){
+var count = 0;
+Artist.find({artist_name: {$in : nameArray}})
+.exec(function (err, docs){
+  if (err && count == 0) {
+    //console.log(err);
+    count++;
+  }
+  else if (!docs)
+  {
+    callBack(docs);
+  }
+  else {
+    callBack(docs);
+  }
+})
+
+
+}
+,
+// search database for close match
 searchDatabaseForCloseMatch: function(name, callBack){
   console.log("search databaseX");
-
-
-  console.log (name);
   var count = 0;
   Artist.find({ artist_name : { $regex :  name  , $options: 'i'} }, function (error, result)
 {
@@ -88,8 +105,47 @@ else {
   callBack(result);
 }
 });
+},
+//adds artist name to users list
+updateUserArtistList: function(userName,artistName)
+{
+ console.log(userName);
+console.log(artistName);
+  User.findOne ({username: userName})
+  .exec(function (err, user){
+    if (err && count == 0) {
+      console.log(err);
+      count++;
+    }
+    else if (!user)
+    {
 
+    }
+    else {
+      console.log("USER");
+      function isName(x){
+        return x == artistName
+      };
+      console.log(user.myArtists.find(isName));
+      if (user.myArtists.find(isName) == null)
+      {
+        console.log("YERR");
+        user.myArtists.push(artistName);
+        var list = user.myArtists;
+        console.log(user.myArtists)
+        User.findOneAndUpdate({username: userName}, {myArtists : list}, function(err, doc){ console.log(doc);});
+      }
+      else {
+        console.log("BERR");
+        var index = user.myArtists.indexOf(artistName);
+        user.myArtists.splice(index,1);
+        var list = user.myArtists;
+        console.log(list);
+        User.findOneAndUpdate({username: userName}, {myArtists : list}, function(err, doc){ console.log(doc);});
+      }
 
+    }
+  })
 
 }
 

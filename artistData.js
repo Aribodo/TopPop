@@ -9,8 +9,11 @@
   var client_id = '5080dcbe4ead4467820c37080e368ac9';
   var client_secret = 'bab61c3aacf24556adfb81939c795be5';
   var helper = help();
-   var BillBoard = require('billboard-hot-100');
-
+  var BillBoard = require('billboard-hot-100');
+  var {google} = require('googleapis');
+  var fs = require('fs');
+  const Storage = require('@google-cloud/storage');
+  var artistArray = [];
 
 
 
@@ -23,10 +26,9 @@
     this.twitterId = twitterId;
   }
 
-
+  
   function removeAtindex(index,data)
   {
-
     if (index.length!=0)
     {
     var temp = data.slice(0);
@@ -43,17 +45,14 @@
            if (x == index.length - 1)
            {
            data.push(temp[i]);
-
            }
          }
        }
-
-
     }
-
     }
-
   }
+
+  //updates/adds artist to artist array
   function updateArtistArray(size, element)
   {
     console.log("UPDATING ARTIST ARRAY");
@@ -62,7 +61,6 @@
     {
     if (size <= 1)
     {
-
       if(size != 0)
       {
       artistArray.push(new Artist(element[i].name, element[i].items[0].url,element[i].followers.total, element[i].genres[0],element[i].id));
@@ -72,7 +70,6 @@
     else {
       for(var i = 0; i < size; i++)
       {
-
         if((artistArray.length!= 0 && helper.verifyArtistDistinct(element[i].name, artistArray)) || artistArray.length == 0)
         {
           count = count + 1;
@@ -80,12 +77,11 @@
         artistArray.push(artist);
         }
       }
-
       resolve(1);
     }
   })
   }
-
+  //checks to see if artists are already stored on database
   function spotifyIdsAlreadyOnDatabase(body,data)
   {
     console.log("SEARCHING DATABASE FOR ARTIST PREVIOUSLY SAVED");
@@ -94,20 +90,13 @@
     {
       var count = 0;
       var spotifyIds = [[],[]];
-     console.log("before error");
-     //console.log(data);
       data.forEach(function(x,index){
-
       var token = body.access_token;
-
       var artistName = helper.removeFeatures(x.artist);
-
        database.searchDatabase(artistName,function(result){
-
         count = count + 1;
         if (result )
         {
-
           if (count<50)
           {
           spotifyIds[0].push(result.spotify_artist_id);
@@ -121,18 +110,15 @@
         if(count == data.length)
         {
            removeAtindex(removeIndex,data);
-
            resolve(spotifyIds);
         }
       });
     })
   })
   }
-
+//converts IDs array to single string
   function idsAsStrings(idsArray){
-
     var string = '';
-
     for(var i = 0; i<idsArray.length; i++)
     {
       if(i == idsArray.length-1)
@@ -146,7 +132,7 @@
   return string;
   }
 
-
+ // search spotify IDs in bulk
   function spotifyBulkSearch(spotifyIds,token){
     console.log("SEARCH SPOTIFY IN BULK");
     if (spotifyIds[0].length == 0)
@@ -169,7 +155,6 @@
       },
       json:true
     };
-
   request2.get(options).then(function(body){
     count = count + 1;
     seperateRequestArtists.push(body.artists);
@@ -180,15 +165,12 @@
     }
   })
 })
-
-
-
   })
   }
   }
 
 
-
+//search spotify individualy for artist
   function spotifyIndividualSearch(token,data)
   {
     console.log("SPOTIFY INDIVIDUAL SEARCH ");
@@ -197,11 +179,8 @@
     var count = 0;
     var errorCount = 0;
     count2 = data.length;
-
      data.forEach(function(x) {
-
        var artistName = helper.removeFeatures(x.artist);
-
        var options = {
          url: 'https://api.spotify.com/v1/search?q='+ encodeURI(artistName)+'&type=artist',
          headers: {
@@ -211,30 +190,23 @@
        };
 
        request2.get(options).then(function(body){
-
          if (body.artists.items.length != 0 && helper.verifyArtistDistinct(body.artists.items[0].name, artistArray)){
-
            if (body.artists.items[0].name == 'undefined' || body.artists.items[0].images[0] == undefined )
            {
              console.log('error in search');
-             //console.log(encodeURI(body.artists.items[0].name));
-             //console.log(body.artists);
             resolve(1);
            }
            else{
              count = count + 1;
-
              artistArray.push(new Artist(body.artists.items[0].name, body.artists.items[0].images[0].url,body.artists.items[0].followers.total, body.artists.items[0].genres[0],body.artists.items[0].id ));
              if(count == count2)
              {
-               //console.log("BULK RESOLVED");
                resolve(1);
              }
            }
          }
          else {
            count2 = count2 - 1;
-
            if (body.artists.items[0] == undefined)
            {
              /*console.log("unfound")
@@ -254,7 +226,6 @@
            resolve(1);
          }
          }
-
        })
        .catch(function(error)
        {
@@ -273,9 +244,9 @@
 
   module.exports = function()
   {
-
     return {
 
+      //fetches artist bio from wikipedia
       getBio : function(name)
       {
         console.log("GET BIO");
@@ -283,59 +254,30 @@
         var bio;
         var count = 0 ;
         return new Promise(function(resolve, reject){
-
             request2(url + encodeURI(name) + '&indexpageids=' , function(error, response, body) {
-
               var pageID = JSON.parse(body).query.pageids[0];
               bio = JSON.parse(body).query.pages[pageID].extract;
               resolve(bio);
             })
         });
       },
-
+      //fetches the billboard top 100 for the day
       billboardTop100 : function(){
         console.log("BILLBOARD 100");
         var data = [];
         return new Promise(function(resolve, reject) {
-          /*request2('http://www.billboard.com/rss/charts/hot-100', function(error, response, body) {
-            console.log('FETCH BILLBOARD');
-            if (error)
-            {
-              console.log('ERROR IN BILLBOOARD' );
-            }
-            else{
-              var json = parser.toJson(body);
-
-              var jSON = JSON.parse(json);
-
-              var charts = JSON.stringify(jSON.rss.channel.item);
-
-              resolve(data = jSON.rss.channel.item);
-
-            }
-
-          })*/
-
           BillBoard.init().then(function(billboard){
           var songs = billboard.getAllSongs()
           resolve(songs)
           }).catch(function(err){
           console.log(err)
           })
-
         });
       },
-
+       //fetches information data related to artist from spotify
       loadArtistData : function(data){
-
+       console.log('LOAD ARTIST DATA');
         return new Promise(function(resolve, reject){
-        /*if(d != undefined && d.length == 1)
-        {
-          d = [];
-
-          data.push(d);
-        } */
-        console.log('LOAD ARTIST DATA');
         var authOptions = {
           method:'POST',
           url: 'https://accounts.spotify.com/api/token',
@@ -348,17 +290,17 @@
           json: true
         };
         request2(authOptions).then(function(body){
-
           var count = 0;
           var count2 = data.length;
           var errorCount = 0;
           var token = body.access_token;
           artistArray = [];
           //BULK SEARCH
-          spotifyIdsAlreadyOnDatabase(body,data).then(function(ids){
-
+          spotifyIdsAlreadyOnDatabase(body,data)
+          .then(function(ids){
             return spotifyBulkSearch(ids,token)
-          }).then(function(element){
+          })
+          .then(function(element){
             if (element == 1)
             {
               return Promise.resolve(1);
@@ -370,21 +312,16 @@
           }).then(function(){
          //INDIVIDUAL SEARCH
          return spotifyIndividualSearch(token,data)
-
        }).then(function(){
            resolve(artistArray);
        })
-
         });
-
         });
-
       },
 
-
+       // fetches instagram data
       loadInstagramData : function ()
       {
-
         var artistName = 'Russ';
         var token = '1706596900.c664ee9.e3a7a537088845c3835d6a162842558d';
         var options = { url: 'https://api.instagram.com/v1/users/search?q='+ 'umenyiora' + '&access_token='+ token,
@@ -401,13 +338,11 @@
         console.log('INSTAGRAM ERROR')
       })
     },
-
+    // fetches twitter data related to specified artist
     loadTwitterData : function (artistName)
     {
       return new Promise (function (resolve, reject)
     {
-
-
       console.log('TWITTER.2');
       var client = new twitter ({
         consumer_key: 'KzxS6GCGbJEnhx6hpcAOEaWKl',
@@ -420,19 +355,80 @@
         client.get('users/search',{q: artistName + '&filter:verified' , count: 2}, function(error, body, response) {
           if (body[0])
           {
+          console.log("DOGGG22");
+          twitterInfo = {name: '@'+ body[0].screen_name , url:'https://twitter.com/' + body[0].screen_name };
+          console.log("DOGGG");
+          //console.log(body[0]);
+          client.get('search/tweets',{q: twitterInfo.name , count : 100  }, function(error, body, response) {
 
-          twitterInfo = {name: body[0].screen_name , url:'https://twitter.com/' + body[0].screen_name };
-          console.log(twitterInfo);
-          resolve (twitterInfo);
+            var tweets = body;
+            var tString = tweets.statuses.map(function(tweet){
+              return tweet.text;
+            }).join("");
+
+            fs.writeFile("public/tweets.txt", tString , function(err){
+              if(err){
+                return console.log("ERROR IN WRITING FILE");
+              }
+            })
+            resolve ({tweets: tweets.statuses, info: twitterInfo});
+          });
           }
-
         });
-
     });
   },
+  //loads youtube data related to artist
+  loadYoutubeData : function (artistName){
+   var youtube = google.youtube('v3');
+   var API_KEY = 'AIzaSyCzx7F9xPqBIWYWmhhDxvbdfwAxBrinLC8';
+    return new Promise (function (resolve, reject)
+  {
+  youtube.search.list({
+    auth : API_KEY,
+    part : "snippet",
+    q : artistName,
+    type : ""
+  }, function (err,  response)
+{
+  if (err){
+    console.log(err);
+    reject();
+  }
+  var abj = response.data.items;
+  resolve( abj);
+});
+  });
 
-    getArtistArray : function ()
-    {
+  }  ,
+
+  // saves files in tweets.txt to later be analyzed
+  storeGoogle : function (){
+    console.log("Google Storage");
+    var storage = google.storage('v1');
+    const projectId = 'toppop-198019';
+    return new Promise (function (resolve, reject)
+  {
+    const storage = new Storage({
+    projectId: projectId,
+    keyFilename: 'public/TopPop-0e6a279e4f4b.json'
+  });
+ // The name for the new bucket
+ const bucketName = 'top-pop';
+ const filename = 'public/tweets.txt'
+storage
+   .bucket(bucketName)
+   .upload(filename)
+   .then(() => {
+     console.log(`${filename} uploaded to ${bucketName}.`);
+     resolve(1);
+   })
+   .catch(err => {
+     console.error('ERROR:', err);
+   });
+  });
+  },
+    //returns artist array
+    getArtistArray : function (){
       //console.log(artistArray);
       return artistArray;
     },
@@ -441,7 +437,5 @@
     {
       return data;
     }
-
   }
-
   }
