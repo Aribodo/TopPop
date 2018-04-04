@@ -13,7 +13,7 @@ SIGN IN PAGE
 ![](/pageImages/Snip20180313_3.png)
 
 USER PROFILE
-![](/pageImages/Snip20180313_3.png)
+![](/pageImages/Snip20180404_2.png)
 
 SEARCH PAGE
 ![](/pageImages/Snip20180313_4.png)
